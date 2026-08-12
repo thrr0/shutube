@@ -34,6 +34,7 @@ async function runJob(id: string, req: CreateDownloadRequest): Promise<void> {
     const filePath = await downloadMedia({
       url: req.url,
       type: req.type,
+      format: req.format,
       quality: req.quality,
       clip: req.clip,
       onProgress: (pct) => {

@@ -31,6 +31,7 @@ export interface VideoInfoResponse {
 export interface CreateDownloadRequest {
   url: string;
   type: DownloadType;
+  format: string;
   quality: string;
   clip?: Clip;
 }

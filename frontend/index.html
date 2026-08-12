@@ -50,19 +50,29 @@
             <label class="field-label">Tipo</label>
             <div class="toggle-group">
               <button class="toggle-btn active" data-type="video" id="btn-type-video">Video</button>
-              <button class="toggle-btn" data-type="audio" id="btn-type-audio">Solo audio (MP3)</button>
+              <button class="toggle-btn" data-type="audio" id="btn-type-audio">Solo audio</button>
             </div>
           </div>
 
-          <!-- Quality -->
-          <div class="field-group">
-            <label class="field-label" for="select-quality">Calidad</label>
-            <select id="select-quality">
-              <option value="best">Mejor disponible</option>
-              <option value="1080p">1080p</option>
-              <option value="720p">720p</option>
-              <option value="480p">480p</option>
-            </select>
+          <!-- Format + Quality row -->
+          <div class="field-row">
+            <div class="field-group">
+              <label class="field-label" for="select-format">Formato</label>
+              <select id="select-format">
+                <option value="mp4">MP4</option>
+                <option value="webm">WebM</option>
+                <option value="mkv">MKV</option>
+              </select>
+            </div>
+            <div class="field-group" id="quality-group">
+              <label class="field-label" for="select-quality">Calidad</label>
+              <select id="select-quality">
+                <option value="best">Mejor disponible</option>
+                <option value="1080p">1080p</option>
+                <option value="720p">720p</option>
+                <option value="480p">480p</option>
+              </select>
+            </div>
           </div>
 
           <!-- Clip toggle -->

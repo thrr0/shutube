@@ -40,18 +40,21 @@ function buildFormatSelector(type: DownloadType, quality: string): string {
   }
 }
 
+const LOSSLESS_AUDIO_FORMATS = new Set(['wav', 'flac']);
+
 function buildAudioQualityArg(quality: string): string {
   switch (quality) {
-    case '320kbps': return '0';
-    case '192kbps': return '5';
-    case '128kbps': return '7';
-    default:        return '0';
+    case 'high':   return '0';
+    case 'medium': return '5';
+    case 'low':    return '7';
+    default:       return '0';
   }
 }
 
 export interface DownloadOptions {
   url: string;
   type: DownloadType;
+  format: string;
   quality: string;
   clip?: Clip;
   onProgress: (pct: number) => void;
@@ -94,7 +97,7 @@ function findOutputFile(tmpDir: string, baseName: string, type: DownloadType): s
 }
 
 export async function downloadMedia(opts: DownloadOptions): Promise<string> {
-  const { url, type, quality, clip, onProgress } = opts;
+  const { url, type, format, quality, clip, onProgress } = opts;
 
   const tmpDir = os.tmpdir();
   const baseName = sanitizeFilename(`shutube_${Date.now()}`);
@@ -104,9 +107,13 @@ export async function downloadMedia(opts: DownloadOptions): Promise<string> {
   const args: string[] = ['--no-playlist', '--progress', '--newline'];
 
   if (type === 'audio') {
-    args.push('-x', '--audio-format', 'mp3', '--audio-quality', buildAudioQualityArg(quality));
+    args.push('-x', '--audio-format', format);
+    if (!LOSSLESS_AUDIO_FORMATS.has(format)) {
+      args.push('--audio-quality', buildAudioQualityArg(quality));
+    }
   } else {
     args.push('-f', buildFormatSelector(type, quality));
+    args.push('--merge-output-format', format);
   }
 
   if (clip) {

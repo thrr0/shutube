@@ -27,6 +27,7 @@ export async function fetchVideoInfo(url: string): Promise<VideoInfo> {
 export async function createDownload(payload: {
   url: string;
   type: 'video' | 'audio';
+  format: string;
   quality: string;
   clip?: { startSeconds: number; endSeconds: number };
 }): Promise<string> {

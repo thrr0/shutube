@@ -6,11 +6,14 @@ import { CreateDownloadRequest, Clip } from '../types/index';
 
 const router = Router();
 
+const VALID_VIDEO_FORMATS   = new Set(['mp4', 'webm', 'mkv']);
+const VALID_AUDIO_FORMATS   = new Set(['mp3', 'm4a', 'opus', 'wav', 'flac']);
 const VALID_VIDEO_QUALITIES = new Set(['best', '1080p', '720p', '480p']);
-const VALID_AUDIO_QUALITIES = new Set(['320kbps', '192kbps', '128kbps']);
+const VALID_AUDIO_QUALITIES = new Set(['high', 'medium', 'low']);
+const LOSSLESS_AUDIO_FORMATS = new Set(['wav', 'flac']);
 
 router.post('/', (req: Request, res: Response): void => {
-  const { url, type, quality, clip } = req.body as CreateDownloadRequest & { clip?: unknown };
+  const { url, type, format, quality, clip } = req.body as CreateDownloadRequest & { clip?: unknown };
 
   if (!url || typeof url !== 'string') {
     res.status(400).json({ error: 'url is required' });
@@ -24,13 +27,25 @@ router.post('/', (req: Request, res: Response): void => {
     res.status(400).json({ error: 'type must be "video" or "audio"' });
     return;
   }
-  if (type === 'video' && !VALID_VIDEO_QUALITIES.has(quality)) {
-    res.status(400).json({ error: `quality must be one of: ${[...VALID_VIDEO_QUALITIES].join(', ')}` });
-    return;
+  if (type === 'video') {
+    if (!VALID_VIDEO_FORMATS.has(format)) {
+      res.status(400).json({ error: `format must be one of: ${[...VALID_VIDEO_FORMATS].join(', ')}` });
+      return;
+    }
+    if (!VALID_VIDEO_QUALITIES.has(quality)) {
+      res.status(400).json({ error: `quality must be one of: ${[...VALID_VIDEO_QUALITIES].join(', ')}` });
+      return;
+    }
   }
-  if (type === 'audio' && !VALID_AUDIO_QUALITIES.has(quality)) {
-    res.status(400).json({ error: `quality must be one of: ${[...VALID_AUDIO_QUALITIES].join(', ')}` });
-    return;
+  if (type === 'audio') {
+    if (!VALID_AUDIO_FORMATS.has(format)) {
+      res.status(400).json({ error: `format must be one of: ${[...VALID_AUDIO_FORMATS].join(', ')}` });
+      return;
+    }
+    if (!LOSSLESS_AUDIO_FORMATS.has(format) && !VALID_AUDIO_QUALITIES.has(quality)) {
+      res.status(400).json({ error: `quality must be one of: ${[...VALID_AUDIO_QUALITIES].join(', ')}` });
+      return;
+    }
   }
 
   let validatedClip: Clip | undefined;
@@ -49,7 +64,7 @@ router.post('/', (req: Request, res: Response): void => {
     validatedClip = { startSeconds: start, endSeconds: end };
   }
 
-  const jobId = createJob({ url, type, quality, clip: validatedClip });
+  const jobId = createJob({ url, type, format, quality, clip: validatedClip });
   res.status(202).json({ jobId });
 });
 

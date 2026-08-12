@@ -15,7 +15,9 @@ const previewDur     = document.getElementById('preview-duration')as HTMLParagra
 const sectionOptions = document.getElementById('section-options') as HTMLElement;
 const btnTypeVideo   = document.getElementById('btn-type-video')  as HTMLButtonElement;
 const btnTypeAudio   = document.getElementById('btn-type-audio')  as HTMLButtonElement;
+const selectFormat   = document.getElementById('select-format')   as HTMLSelectElement;
 const selectQuality  = document.getElementById('select-quality')  as HTMLSelectElement;
+const qualityGroup   = document.getElementById('quality-group')   as HTMLElement;
 const clipToggle     = document.getElementById('clip-toggle')     as HTMLInputElement;
 const clipFields     = document.getElementById('clip-fields')     as HTMLElement;
 const clipStart      = document.getElementById('clip-start')      as HTMLInputElement;
@@ -64,21 +66,47 @@ function parseTime(str: string): number | null {
   return null;
 }
 
-function setVideoQualities() {
+const LOSSLESS_AUDIO_FORMATS = new Set(['wav', 'flac']);
+
+function updateQualityForFormat() {
+  if (selectedType === 'audio') {
+    if (LOSSLESS_AUDIO_FORMATS.has(selectFormat.value)) {
+      hide(qualityGroup);
+    } else {
+      show(qualityGroup);
+    }
+  }
+}
+
+function setVideoOptions() {
+  selectFormat.innerHTML = `
+    <option value="mp4">MP4</option>
+    <option value="webm">WebM</option>
+    <option value="mkv">MKV</option>
+  `;
   selectQuality.innerHTML = `
     <option value="best">Mejor disponible</option>
     <option value="1080p">1080p</option>
     <option value="720p">720p</option>
     <option value="480p">480p</option>
   `;
+  show(qualityGroup);
 }
 
-function setAudioQualities() {
-  selectQuality.innerHTML = `
-    <option value="320kbps">320 kbps</option>
-    <option value="192kbps">192 kbps</option>
-    <option value="128kbps">128 kbps</option>
+function setAudioOptions() {
+  selectFormat.innerHTML = `
+    <option value="mp3">MP3</option>
+    <option value="m4a">M4A</option>
+    <option value="opus">Opus</option>
+    <option value="wav">WAV</option>
+    <option value="flac">FLAC</option>
   `;
+  selectQuality.innerHTML = `
+    <option value="high">Alta</option>
+    <option value="medium">Media</option>
+    <option value="low">Baja</option>
+  `;
+  updateQualityForFormat();
 }
 
 function setProgress(pct: number) {
@@ -127,12 +155,16 @@ function selectType(type: 'video' | 'audio') {
   selectedType = type;
   btnTypeVideo.classList.toggle('active', type === 'video');
   btnTypeAudio.classList.toggle('active', type === 'audio');
-  if (type === 'video') setVideoQualities();
-  else setAudioQualities();
+  if (type === 'video') setVideoOptions();
+  else setAudioOptions();
 }
 
 btnTypeVideo.addEventListener('click', () => selectType('video'));
 btnTypeAudio.addEventListener('click', () => selectType('audio'));
+
+selectFormat.addEventListener('change', () => {
+  if (selectedType === 'audio') updateQualityForFormat();
+});
 
 // ── Clip toggle ───────────────────────────────────────────────────────────────
 
@@ -182,6 +214,7 @@ async function handleDownload() {
     const jobId = await createDownload({
       url: currentUrl,
       type: selectedType,
+      format: selectFormat.value,
       quality: selectQuality.value,
       clip,
     });
