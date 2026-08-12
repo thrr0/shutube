@@ -506,6 +506,33 @@ footer {
 
 .github-link:hover { color: var(--text); }
 
+/* ── Server status ─────────────────────────────────────────────────────── */
+
+.server-status {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.75rem;
+  color: var(--muted);
+}
+
+.status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--muted);
+  flex-shrink: 0;
+  opacity: 0.5;
+}
+
+.status-dot.online  { background: var(--success); opacity: 1; }
+.status-dot.offline { background: #f59e0b; opacity: 1; animation: status-pulse 1.8s ease-in-out infinite; }
+
+@keyframes status-pulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.25; }
+}
+
 /* ── Focus visible ─────────────────────────────────────────────────────── */
 
 :focus-visible {
@@ -528,5 +555,8 @@ footer {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after { transition-duration: 0.01ms !important; }
+  *, *::before, *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
 }

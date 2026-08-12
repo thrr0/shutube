@@ -23,6 +23,7 @@ app.use(
   })
 );
 
+app.get('/api/health', (_req, res) => { res.json({ status: 'ok' }); });
 app.use('/api/video-info', videoInfoRouter);
 app.use('/api/downloads', downloadsRouter);
 

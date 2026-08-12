@@ -1,4 +1,4 @@
-import { fetchVideoInfo, createDownload, pollJob, fileUrl, VideoInfo } from './api.js';
+import { fetchVideoInfo, createDownload, pollJob, fileUrl, checkHealth, VideoInfo } from './api.js';
 
 // ── DOM refs ──────────────────────────────────────────────────────────────────
 
@@ -278,6 +278,27 @@ btnNew.addEventListener('click', () => {
   btnDownload.textContent = 'Download';
 });
 
+// ── Server status polling ─────────────────────────────────────────────────────
+
+async function pollServerStatus(): Promise<void> {
+  const dot  = document.getElementById('status-dot')  as HTMLElement;
+  const text = document.getElementById('status-text') as HTMLElement;
+
+  while (true) {
+    const online = await checkHealth();
+    if (online) {
+      dot.className    = 'status-dot online';
+      text.textContent = 'Server online';
+      await new Promise(r => setTimeout(r, 60_000));
+    } else {
+      dot.className    = 'status-dot offline';
+      text.textContent = 'Server waking up…';
+      await new Promise(r => setTimeout(r, 5_000));
+    }
+  }
+}
+
 // ── Init ──────────────────────────────────────────────────────────────────────
 
 selectType('video');
+pollServerStatus();

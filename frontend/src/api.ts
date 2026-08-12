@@ -53,3 +53,12 @@ export async function pollJob(jobId: string): Promise<JobStatus> {
 export function fileUrl(jobId: string): string {
   return `${BASE}/downloads/${jobId}/file`;
 }
+
+export async function checkHealth(): Promise<boolean> {
+  try {
+    const res = await fetch(`${BASE}/health`, { signal: AbortSignal.timeout(4000) });
+    return res.ok;
+  } catch {
+    return false;
+  }
+}
