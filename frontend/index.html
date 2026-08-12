@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>shutube</title>
+  <link rel="stylesheet" href="/src/style.css" />
+</head>
+<body>
+  <div id="app">
+    <header>
+      <h1>shutube</h1>
+      <p class="subtitle">Descargá videos y audio de YouTube</p>
+    </header>
+
+    <main>
+      <!-- URL input -->
+      <section class="card" id="section-url">
+        <div class="input-row">
+          <input
+            type="url"
+            id="url-input"
+            placeholder="https://youtube.com/watch?v=..."
+            autocomplete="off"
+            spellcheck="false"
+          />
+          <button id="btn-search" class="btn-primary">Buscar</button>
+        </div>
+        <p id="url-error" class="error-msg hidden"></p>
+      </section>
+
+      <!-- Video preview -->
+      <section class="card hidden" id="section-preview">
+        <div class="preview">
+          <img id="preview-thumb" src="" alt="thumbnail" />
+          <div class="preview-info">
+            <h2 id="preview-title"></h2>
+            <p id="preview-channel" class="muted"></p>
+            <p id="preview-duration" class="muted"></p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Download options -->
+      <section class="card hidden" id="section-options">
+        <div class="options-grid">
+
+          <!-- Type toggle -->
+          <div class="field-group">
+            <label class="field-label">Tipo</label>
+            <div class="toggle-group">
+              <button class="toggle-btn active" data-type="video" id="btn-type-video">Video</button>
+              <button class="toggle-btn" data-type="audio" id="btn-type-audio">Solo audio (MP3)</button>
+            </div>
+          </div>
+
+          <!-- Quality -->
+          <div class="field-group">
+            <label class="field-label" for="select-quality">Calidad</label>
+            <select id="select-quality">
+              <option value="best">Mejor disponible</option>
+              <option value="1080p">1080p</option>
+              <option value="720p">720p</option>
+              <option value="480p">480p</option>
+            </select>
+          </div>
+
+          <!-- Clip toggle -->
+          <div class="field-group full-width">
+            <label class="checkbox-label">
+              <input type="checkbox" id="clip-toggle" />
+              Recortar clip
+            </label>
+          </div>
+
+          <!-- Clip times -->
+          <div class="field-group hidden" id="clip-fields">
+            <label class="field-label" for="clip-start">Inicio (mm:ss)</label>
+            <input type="text" id="clip-start" placeholder="00:00" class="time-input" />
+            <label class="field-label" for="clip-end">Fin (mm:ss)</label>
+            <input type="text" id="clip-end" placeholder="00:00" class="time-input" />
+            <p id="clip-error" class="error-msg hidden"></p>
+          </div>
+
+        </div>
+
+        <button id="btn-download" class="btn-primary btn-large">Descargar</button>
+        <p id="download-error" class="error-msg hidden"></p>
+      </section>
+
+      <!-- Progress -->
+      <section class="card hidden" id="section-progress">
+        <p id="progress-label">Procesando...</p>
+        <div class="progress-bar-track">
+          <div class="progress-bar-fill" id="progress-fill"></div>
+        </div>
+        <p id="progress-pct" class="muted">0%</p>
+        <p id="progress-error" class="error-msg hidden"></p>
+      </section>
+
+      <!-- Done -->
+      <section class="card hidden" id="section-done">
+        <p class="success-msg">Listo</p>
+        <a id="btn-save" class="btn-primary btn-large" download>Guardar archivo</a>
+        <button id="btn-new" class="btn-secondary">Nueva descarga</button>
+      </section>
+    </main>
+  </div>
+
+  <script type="module" src="/src/main.ts"></script>
+</body>
+</html>
