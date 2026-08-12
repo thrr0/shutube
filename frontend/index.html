@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -9,112 +9,139 @@
 <body>
   <div id="app">
     <header>
-      <h1>shutube</h1>
-      <p class="subtitle">Descargá videos y audio de YouTube</p>
+      <h1 class="logo"><span>shu</span>tube</h1>
+      <p class="tagline">Download YouTube videos and audio</p>
     </header>
 
     <main>
-      <!-- URL input -->
+
+      <!-- URL -->
       <section class="card" id="section-url">
-        <div class="input-row">
+        <div class="search-field">
           <input
             type="url"
             id="url-input"
-            placeholder="https://youtube.com/watch?v=..."
+            placeholder="Paste a YouTube URL…"
             autocomplete="off"
             spellcheck="false"
           />
-          <button id="btn-search" class="btn-primary">Buscar</button>
+          <button id="btn-search" class="search-btn" aria-label="Search">
+            <svg width="15" height="15" viewBox="0 0 15 15" fill="none" aria-hidden="true">
+              <path d="M2 7.5h11M9 3l4.5 4.5L9 12" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </button>
         </div>
         <p id="url-error" class="error-msg hidden"></p>
       </section>
 
-      <!-- Video preview -->
+      <!-- Preview -->
       <section class="card hidden" id="section-preview">
         <div class="preview">
-          <img id="preview-thumb" src="" alt="thumbnail" />
-          <div class="preview-info">
-            <h2 id="preview-title"></h2>
-            <p id="preview-channel" class="muted"></p>
-            <p id="preview-duration" class="muted"></p>
+          <img id="preview-thumb" src="" alt="Video thumbnail" />
+          <div class="preview-meta">
+            <p id="preview-title" class="preview-title"></p>
+            <div class="preview-tags">
+              <span id="preview-channel" class="meta-tag"></span>
+              <span id="preview-duration" class="meta-tag"></span>
+            </div>
           </div>
         </div>
       </section>
 
-      <!-- Download options -->
+      <!-- Options -->
       <section class="card hidden" id="section-options">
-        <div class="options-grid">
 
-          <!-- Type toggle -->
-          <div class="field-group">
-            <label class="field-label">Tipo</label>
-            <div class="toggle-group">
-              <button class="toggle-btn active" data-type="video" id="btn-type-video">Video</button>
-              <button class="toggle-btn" data-type="audio" id="btn-type-audio">Solo audio</button>
-            </div>
+        <div class="option-row">
+          <span class="option-label">Type</span>
+          <div class="pill-group" id="type-group">
+            <button class="pill active" id="btn-type-video" type="button">Video</button>
+            <button class="pill" id="btn-type-audio" type="button">Audio</button>
           </div>
-
-          <!-- Format + Quality row -->
-          <div class="field-row">
-            <div class="field-group">
-              <label class="field-label" for="select-format">Formato</label>
-              <select id="select-format">
-                <option value="mp4">MP4</option>
-                <option value="webm">WebM</option>
-                <option value="mkv">MKV</option>
-              </select>
-            </div>
-            <div class="field-group" id="quality-group">
-              <label class="field-label" for="select-quality">Calidad</label>
-              <select id="select-quality">
-                <option value="best">Mejor disponible</option>
-                <option value="1080p">1080p</option>
-                <option value="720p">720p</option>
-                <option value="480p">480p</option>
-              </select>
-            </div>
-          </div>
-
-          <!-- Clip toggle -->
-          <div class="field-group full-width">
-            <label class="checkbox-label">
-              <input type="checkbox" id="clip-toggle" />
-              Recortar clip
-            </label>
-          </div>
-
-          <!-- Clip times -->
-          <div class="field-group hidden" id="clip-fields">
-            <label class="field-label" for="clip-start">Inicio (mm:ss)</label>
-            <input type="text" id="clip-start" placeholder="00:00" class="time-input" />
-            <label class="field-label" for="clip-end">Fin (mm:ss)</label>
-            <input type="text" id="clip-end" placeholder="00:00" class="time-input" />
-            <p id="clip-error" class="error-msg hidden"></p>
-          </div>
-
         </div>
 
-        <button id="btn-download" class="btn-primary btn-large">Descargar</button>
+        <hr class="divider" />
+
+        <div class="option-row">
+          <span class="option-label">Format</span>
+          <div class="pill-group" id="format-group"></div>
+        </div>
+
+        <div class="option-row" id="quality-row">
+          <span class="option-label">Quality</span>
+          <div class="pill-group" id="quality-group-pills"></div>
+        </div>
+
+        <hr class="divider" />
+
+        <div class="option-row">
+          <span class="option-label">Clip</span>
+          <label class="toggle-label">
+            <input type="checkbox" id="clip-toggle" />
+            <span class="toggle-track"><span class="toggle-thumb"></span></span>
+          </label>
+        </div>
+
+        <div class="clip-fields hidden" id="clip-fields">
+          <div class="time-pair">
+            <div class="time-field">
+              <span class="time-label">Start</span>
+              <input type="text" id="clip-start" placeholder="0:00" class="time-input" />
+            </div>
+            <span class="time-sep">→</span>
+            <div class="time-field">
+              <span class="time-label">End</span>
+              <input type="text" id="clip-end" placeholder="0:00" class="time-input" />
+            </div>
+          </div>
+          <p id="clip-error" class="error-msg hidden"></p>
+        </div>
+
+        <hr class="divider" />
+
+        <button id="btn-download" class="btn-primary" type="button">Download</button>
         <p id="download-error" class="error-msg hidden"></p>
+
       </section>
 
       <!-- Progress -->
       <section class="card hidden" id="section-progress">
-        <p id="progress-label">Procesando...</p>
-        <div class="progress-bar-track">
-          <div class="progress-bar-fill" id="progress-fill"></div>
+        <div class="progress-header">
+          <span id="progress-label">Processing…</span>
+          <span id="progress-pct" class="progress-pct">0%</span>
         </div>
-        <p id="progress-pct" class="muted">0%</p>
+        <div class="progress-track">
+          <div class="progress-fill" id="progress-fill"></div>
+        </div>
         <p id="progress-error" class="error-msg hidden"></p>
       </section>
 
       <!-- Done -->
       <section class="card hidden" id="section-done">
-        <p class="success-msg">Listo</p>
-        <a id="btn-save" class="btn-primary btn-large" download>Guardar archivo</a>
-        <button id="btn-new" class="btn-secondary">Nueva descarga</button>
+        <div class="done-row">
+          <span class="done-icon" aria-hidden="true">
+            <svg width="19" height="19" viewBox="0 0 19 19" fill="none">
+              <circle cx="9.5" cy="9.5" r="8.5" stroke="currentColor" stroke-width="1.4"/>
+              <path d="M6 9.5l2.5 2.5 5-5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </span>
+          <span class="done-label">Ready</span>
+          <div class="done-actions">
+            <a id="btn-save" class="btn-primary btn-save" download>Save file</a>
+            <button id="btn-new" class="btn-ghost" type="button">New download</button>
+          </div>
+        </div>
       </section>
+
     </main>
+
+    <footer>
+      <a href="https://github.com/thrr0/shutube" target="_blank" rel="noopener noreferrer" class="github-link">
+        <svg width="17" height="17" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+          <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/>
+        </svg>
+        <span>thrr0/shutube</span>
+      </a>
+    </footer>
   </div>
 
   <script type="module" src="/src/main.ts"></script>
