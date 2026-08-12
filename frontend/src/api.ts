@@ -11,7 +11,9 @@ export interface JobStatus {
   error?: string;
 }
 
-const BASE = '/api';
+// In dev: falls back to /api (Vite proxy → localhost:3001)
+// In production on Vercel: set VITE_API_URL=https://your-app.onrender.com/api
+const BASE = (import.meta.env.VITE_API_URL as string | undefined) ?? '/api';
 
 export async function fetchVideoInfo(url: string): Promise<VideoInfo> {
   const res = await fetch(`${BASE}/video-info`, {

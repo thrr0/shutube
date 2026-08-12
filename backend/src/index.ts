@@ -7,7 +7,12 @@ import downloadsRouter from './routes/downloads';
 const app = express();
 const PORT = process.env.PORT ?? 3001;
 
-app.use(cors({ origin: 'http://localhost:5173' }));
+// Public tool — allow all origins. In dev, restrict to Vite's port.
+app.use(
+  process.env.NODE_ENV === 'production'
+    ? cors()
+    : cors({ origin: 'http://localhost:5173' })
+);
 app.use(express.json());
 
 app.use(
