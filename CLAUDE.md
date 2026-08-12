@@ -1,29 +1,29 @@
 # CLAUDE.md
 
-## Contexto del proyecto
-App web para descargar videos y audio de YouTube (completos o en clips) para uso personal.
+## Project context
+Web app to download YouTube videos and audio (full or clipped) — free to use, with responsibility falling on the user.
 
 ## Stack
 - Backend: Node.js + TypeScript + Express
-- Motor de descarga: yt-dlp (binario externo, invocado via `execa`)
-- Procesamiento de media: ffmpeg (recorte de clips, extracción de audio)
-- Frontend: Vite + TypeScript vanilla (sin framework), HTML/CSS simple
-- Sin base de datos: estado de jobs en memoria (`Map`), suficiente para uso single-user/MVP
+- Download engine: yt-dlp (external binary, invoked via `execa`)
+- Media processing: ffmpeg (clip trimming, audio extraction)
+- Frontend: Vite + vanilla TypeScript (no framework), plain HTML/CSS
+- No database: job state held in memory (`Map`), sufficient for MVP
 
-## Convenciones
-- TypeScript en modo `strict` en todo el proyecto
-- Nunca invocar yt-dlp/ffmpeg con `shell: true` ni interpolar el input del usuario en un string de comando — siempre pasar argumentos como array (`execa`) para evitar command injection
-- Validar que la URL sea de youtube.com o youtu.be antes de procesar cualquier request
-- Nombres de archivo de salida sanitizados (sin caracteres especiales/paths)
-- Limpiar archivos temporales después de servirlos, o por TTL (15 min)
+## Conventions
+- TypeScript in `strict` mode throughout
+- Never invoke yt-dlp/ffmpeg with `shell: true` or interpolate user input into a command string — always pass arguments as an array (`execa`) to prevent command injection
+- Validate that the URL belongs to youtube.com or youtu.be before processing any request
+- Sanitize output filenames (strip special characters and path separators)
+- Clean up temp files after serving them, or via TTL (15 min)
 
-## Estructura de carpetas
+## Folder structure
 ```
-yt-downloader/
+shutube/
   backend/
     src/
       routes/
-      services/        (wrapper yt-dlp, wrapper ffmpeg, job manager)
+      services/        (yt-dlp wrapper, ffmpeg wrapper, job manager)
       types/
     package.json
     tsconfig.json
@@ -33,12 +33,12 @@ yt-downloader/
     package.json
 ```
 
-## Comandos
+## Commands
 - Backend: `npm run dev` (ts-node-dev), `npm run build`, `npm test`
 - Frontend: `npm run dev` (vite), `npm run build`
 
-## Documentos de referencia
-Leer `PRD.md` (requisitos y user stories) y `ARCHITECTURE.md` (contrato de API y diseño técnico) antes de generar código. Las decisiones de stack y estructura ahí definidas no se cambian sin confirmar antes.
+## Reference documents
+Read `PRD.md` (requirements and user stories) and `ARCHITECTURE.md` (API contract and technical design) before generating code. Stack and structure decisions defined there are not changed without confirming first.
 
-## Alcance
-Herramienta de uso personal. No implementar en el MVP: descarga de playlists completas, livestreams, cuentas de usuario, ni bypass de restricciones de edad/región.
+## Scope
+Free tool — users are responsible for their own use. Out of scope for MVP: full playlist downloads, livestreams, user accounts, age/region restriction bypass.

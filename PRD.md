@@ -1,38 +1,38 @@
-# PRD — YouTube Downloader
+# PRD — shutube
 
-## Objetivo
-Web app simple para descargar videos de YouTube completos, solo audio, o un clip (rango de tiempo específico), para uso personal.
+## Goal
+A simple web app to download full YouTube videos, audio-only, or a specific time-range clip. Free to use; users are responsible for complying with applicable law and YouTube's Terms of Service.
 
-## Usuarios
-Un solo usuario, sin autenticación en el MVP.
+## Users
+Anyone. No authentication in the MVP.
 
 ## User stories
-1. Como usuario, pego una URL de YouTube y veo un preview: título, thumbnail, duración y canal.
-2. Como usuario, elijo descargar el video completo, seleccionando calidad (ej. best, 1080p, 720p, 480p).
-3. Como usuario, elijo descargar solo el audio en mp3, seleccionando calidad (ej. 320kbps, 192kbps, 128kbps).
-4. Como usuario, opcionalmente indico un rango de tiempo (inicio/fin en mm:ss) para descargar solo un clip, tanto en video como en audio.
-5. Como usuario, veo el progreso de la descarga en tiempo real (%).
-6. Como usuario, al terminar, descargo el archivo con un botón.
+1. As a user, I paste a YouTube URL and see a preview: title, thumbnail, duration, and channel.
+2. As a user, I choose to download the full video, selecting quality (e.g. best, 1080p, 720p, 480p).
+3. As a user, I choose to download audio-only as MP3, selecting quality (e.g. 320kbps, 192kbps, 128kbps).
+4. As a user, I optionally specify a time range (start/end in mm:ss) to download only a clip, for both video and audio.
+5. As a user, I see download progress in real time (%).
+6. As a user, once complete, I download the file with a button.
 
-## Fuera de alcance (MVP)
-- Playlists completas
-- Livestreams / videos en vivo
-- Cuentas de usuario / historial persistente
-- Videos con restricción de edad que requieran cookies de sesión
+## Out of scope (MVP)
+- Full playlist downloads
+- Livestreams / active broadcasts
+- User accounts / persistent history
+- Age-restricted videos requiring session cookies
 
-## Validaciones y casos borde
-- URL inválida o que no sea de YouTube → error claro en el frontend
-- Video privado/eliminado/no disponible → mostrar error devuelto por el backend
-- Clip: validar que `start < end` y `end <= duración total del video`
-- Timeout de descarga (ej. 10 min) → marcar job como error
+## Validations and edge cases
+- Invalid URL or non-YouTube URL → clear error in the frontend
+- Private / deleted / unavailable video → show error returned by the backend
+- Clip: validate that `start < end` and `end <= total video duration`
+- Download timeout (e.g. 10 min) → mark job as error
 
-## Uso responsable
-Herramienta pensada para uso personal (backups, contenido propio, contenido con licencia libre). El usuario es responsable de respetar los Términos de Servicio de YouTube y la legislación de copyright aplicable.
+## Responsible use
+shutube is a free tool. Users are solely responsible for respecting YouTube's Terms of Service and the copyright legislation applicable in their jurisdiction.
 
-## Criterios de aceptación del MVP
-- [ ] Preview de metadata funciona para URLs válidas
-- [ ] Descarga de video completo en al menos 2 calidades
-- [ ] Descarga de audio en mp3
-- [ ] Descarga de clip (start/end) tanto en video como audio
-- [ ] Barra de progreso funcional
-- [ ] Manejo de errores visible en la UI
+## MVP acceptance criteria
+- [ ] Metadata preview works for valid URLs
+- [ ] Full video download in at least 2 quality levels
+- [ ] Audio-only download as MP3
+- [ ] Clip download (start/end) for both video and audio
+- [ ] Working progress bar
+- [ ] Error handling visible in the UI

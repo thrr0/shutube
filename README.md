@@ -1,32 +1,33 @@
-# YouTube Downloader
+# shutube
 
-App web para descargar videos y audio de YouTube, completos o en clips, para uso personal.
+A web app to download YouTube videos and audio — full downloads or time-clipped segments — free to use.
 
-## Requisitos previos
+## Prerequisites
 - Node.js 20+
-- `yt-dlp` instalado y en el PATH (`pip install -U yt-dlp` o binario standalone)
-- `ffmpeg` instalado y en el PATH
+- `yt-dlp` in your PATH (`pip install -U yt-dlp` or standalone binary)
+- `ffmpeg` in your PATH
 
-## Instalación
+## Setup
 ```bash
 cd backend && npm install
 cd ../frontend && npm install
 ```
 
-## Desarrollo
+## Development
 ```bash
 # Terminal 1
 cd backend && npm run dev
 
 # Terminal 2
 cd frontend && npm run dev
+# → http://localhost:5173
 ```
 
-## Build de producción
+## Production build
 ```bash
 cd backend && npm run build
 cd frontend && npm run build
 ```
 
-## Uso responsable
-Herramienta para uso personal: contenido propio, backups o material con licencia libre. Respetá los Términos de Servicio de YouTube y el copyright aplicable.
+## Disclaimer
+shutube is a free, open tool. Users are solely responsible for complying with YouTube's Terms of Service and any applicable copyright law in their jurisdiction. The authors provide no warranties and accept no liability for how this tool is used.

@@ -1,16 +1,16 @@
 # ARCHITECTURE.md
 
-## Stack y justificación
-- **yt-dlp**: motor de descarga, activamente mantenido (a diferencia de `ytdl-core`, que se rompe seguido con cambios de YouTube). Se invoca como binario externo.
-- **ffmpeg**: usado para recorte de clips cuando yt-dlp no puede resolverlo directamente, y para extracción/transcodificación de audio.
-- **Backend Express + TS**: simple, suficiente para el alcance del proyecto.
-- **Sin cola externa (Redis/BullMQ)**: jobs en memoria (`Map<jobId, JobState>`) alcanza para single-user MVP. Si se escala a multi-usuario, migrar a una cola persistente.
+## Stack rationale
+- **yt-dlp**: download engine, actively maintained (unlike `ytdl-core`, which breaks frequently with YouTube changes). Invoked as an external binary.
+- **ffmpeg**: used for clip trimming when yt-dlp can't handle it directly, and for audio extraction/transcoding.
+- **Express + TypeScript backend**: simple, sufficient for the project scope.
+- **No external queue (Redis/BullMQ)**: in-memory jobs (`Map<jobId, JobState>`) are enough for the MVP. Migrate to a persistent queue if multi-user scale is needed.
 
-## Prerrequisitos del sistema (no npm)
-- `yt-dlp` instalado y en el PATH
-- `ffmpeg` instalado y en el PATH
+## System prerequisites (not npm)
+- `yt-dlp` installed and in PATH
+- `ffmpeg` installed and in PATH
 
-## Contrato de API
+## API contract
 
 ### POST /api/video-info
 Request:
@@ -37,7 +37,7 @@ Request:
   "clip": { "startSeconds": 0, "endSeconds": 0 }
 }
 ```
-(`clip` es opcional; `quality` ej: "1080p" | "720p" | "best" | "320kbps" | "192kbps")
+(`clip` is optional; `quality` examples: `"1080p"` | `"720p"` | `"best"` | `"320kbps"` | `"192kbps"`)
 
 Response:
 ```json
@@ -50,30 +50,30 @@ Response:
 {
   "status": "queued | processing | done | error",
   "progress": 0,
-  "error": "string (opcional)"
+  "error": "string (optional)"
 }
 ```
 
 ### GET /api/downloads/:jobId/file
-Devuelve el archivo (`Content-Disposition: attachment`). Al finalizar el stream se agenda el borrado del archivo temporal.
+Returns the file (`Content-Disposition: attachment`). After the stream ends, the temp file is scheduled for deletion.
 
-## Flujo interno de descarga
-1. Validar que la URL sea de youtube.com/youtu.be (regex).
-2. Info: `yt-dlp --dump-json <url>` → parsear JSON de stdout.
-3. Crear job en memoria, disparar proceso async:
-   - Video completo: `yt-dlp -f <selector según quality> -o <tempPath> <url>`
+## Internal download flow
+1. Validate that the URL belongs to youtube.com or youtu.be (regex).
+2. Info: `yt-dlp --dump-json <url>` → parse JSON from stdout.
+3. Create job in memory, kick off async process:
+   - Full video: `yt-dlp -f <selector based on quality> -o <tempPath> <url>`
    - Audio: `yt-dlp -x --audio-format mp3 --audio-quality <q> -o <tempPath> <url>`
-   - Clip: usar `--download-sections "*start-end"` de yt-dlp (descarga solo el fragmento necesario cuando el formato lo permite) en vez de bajar el video completo y recortar después. Si no está soportado para ese formato, fallback a descarga completa + recorte con ffmpeg (`-ss start -to end`).
-4. Parsear el stdout de yt-dlp (reporta progreso tipo `[download]  42.0% of ...`) con regex para actualizar `progress` del job.
-5. Al terminar, guardar la ruta del archivo final en el job y marcar `status: done`.
+   - Clip: use `--download-sections "*start-end"` (downloads only the needed fragment when the format supports it). Fallback to full download + ffmpeg trim (`-ss start -to end`) if unsupported.
+4. Parse yt-dlp stdout line by line (reports progress as `[download]  42.0% of ...`) with regex to update job `progress`.
+5. After completion, resolve the actual output file on disk (verify the captured path exists; fall back to `readdirSync` scan if not). Mark `status: done`.
 
-## Seguridad
-- Ejecutar yt-dlp/ffmpeg con `execa` pasando argumentos como array — nunca `shell: true` ni concatenar el input del usuario en un string.
-- Whitelist de dominio (youtube.com / youtu.be) antes de pasar la URL a yt-dlp.
-- Sanitizar nombres de archivo de salida (quitar caracteres no alfanuméricos problemáticos).
-- Rate limiting básico por IP (ej. `express-rate-limit`) para evitar abuso.
-- Límite de duración máxima de descarga/clip configurable (evitar jobs eternos).
-- Limpieza de temporales: borrar tras servir el archivo, o por TTL (cron cada 15 min borra jobs `done` con más de X min de antigüedad).
+## Security
+- Run yt-dlp/ffmpeg via `execa` with arguments as an array — never `shell: true` or user-input string concatenation.
+- Domain whitelist (youtube.com / youtu.be) before passing the URL to yt-dlp.
+- Sanitize output filenames (strip non-alphanumeric problematic characters).
+- Basic rate limiting by IP (`express-rate-limit`) to prevent abuse.
+- Configurable max download/clip duration to avoid runaway jobs.
+- Temp file cleanup: delete after serving, or via TTL (cron every 15 min deletes `done` jobs older than X minutes).
 
-## Estructura de carpetas
-Ver `CLAUDE.md`.
+## Folder structure
+See `CLAUDE.md`.
