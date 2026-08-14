@@ -14,7 +14,10 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
       ffmpeg \
       python3 \
       python3-pip \
+      curl \
+      unzip \
     && pip3 install -U yt-dlp --break-system-packages \
+    && curl -fsSL https://deno.land/x/install/install.sh | DENO_INSTALL=/usr/local sh \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app

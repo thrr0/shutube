@@ -10,10 +10,17 @@ export function isValidYouTubeUrl(url: string): boolean {
   return YOUTUBE_URL_RE.test(url);
 }
 
+// /etc/secrets/ is read-only on Render; yt-dlp needs a writable cookies file.
+const COOKIES_SRC = process.env.YTDLP_COOKIES_FILE;
+const COOKIES_TMP = path.join(os.tmpdir(), 'yt-dlp-cookies.txt');
+if (COOKIES_SRC && fs.existsSync(COOKIES_SRC)) {
+  fs.copyFileSync(COOKIES_SRC, COOKIES_TMP);
+}
+
 const BASE_ARGS = [
-  '--js-runtimes', 'node',
-  '--extractor-args', 'youtube:player_client=ios,web',
-  ...(process.env.YTDLP_COOKIES_FILE ? ['--cookies', process.env.YTDLP_COOKIES_FILE] : []),
+  '--extractor-args', 'youtube:player_client=web',
+  '--remote-components', 'ejs:github',
+  ...(COOKIES_SRC ? ['--cookies', COOKIES_TMP] : []),
 ];
 
 export async function getVideoInfo(url: string): Promise<VideoInfoResponse> {
