@@ -10,8 +10,14 @@ export function isValidYouTubeUrl(url: string): boolean {
   return YOUTUBE_URL_RE.test(url);
 }
 
+const BASE_ARGS = [
+  '--js-runtimes', 'node',
+  '--extractor-args', 'youtube:player_client=ios,web',
+  ...(process.env.YTDLP_COOKIES_FILE ? ['--cookies', process.env.YTDLP_COOKIES_FILE] : []),
+];
+
 export async function getVideoInfo(url: string): Promise<VideoInfoResponse> {
-  const result = await execa('yt-dlp', ['--dump-json', '--no-playlist', url], {
+  const result = await execa('yt-dlp', [...BASE_ARGS, '--dump-json', '--no-playlist', url], {
     timeout: 30_000,
   });
 
@@ -104,7 +110,7 @@ export async function downloadMedia(opts: DownloadOptions): Promise<string> {
   // Always use %(ext)s — never hardcode extension; yt-dlp decides the real format
   const outputTemplate = path.join(tmpDir, `${baseName}.%(ext)s`);
 
-  const args: string[] = ['--no-playlist', '--progress', '--newline'];
+  const args: string[] = [...BASE_ARGS, '--no-playlist', '--progress', '--newline'];
 
   if (type === 'audio') {
     args.push('-x', '--audio-format', format);
